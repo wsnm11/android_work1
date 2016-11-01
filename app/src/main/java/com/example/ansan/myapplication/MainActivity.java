@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.File;
@@ -18,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
+    EditText et1;
 
     private String TAG;
 
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        et1 = (EditText)findViewById(R.id.editText);
     }
 
     public void onclick(View v){
@@ -62,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         String path = Environment.getExternalStorageDirectory().getAbsolutePath();
-        String filename = path + "/test.txt";
+        String filename = path + "/yooseunghun/test.txt";
         File file = new File(filename);
         File mydir = new File(path + "/yooseunghun");
         switch (v.getId()){
@@ -72,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.button2:
                 mydir.delete();
+                Toast.makeText(getApplicationContext(),
+                        "파일 삭제",
+                        Toast.LENGTH_SHORT).show();
                 break;
             case R.id.button3:
                 try {
@@ -89,25 +95,39 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.button4:
-                FileInputStream fos = null;
                 try {
-                    fos = new FileInputStream(filename);
+                    FileInputStream fis = new FileInputStream(filename);
+                    byte arr[] = new byte[fis.available()];
+                    fis.read(arr);
+                    fis.close();
+
+                    String str = new String(arr);
+                    Toast.makeText(getApplicationContext(),
+                            "파일 내용:"+ str,
+                            Toast.LENGTH_SHORT).show();
+
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
-                }
-                try {
-                    fos.read("안녕하세요".getBytes());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
                 Toast.makeText(getApplicationContext(),
                         "파일 읽기",
                         Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.button5:  //
+                String str = "";
+                File[] filelist = new File(path).listFiles();
+                for(int i = 0; i<filelist.length; i++){
+                    if(filelist[i].isDirectory())
+                        str += "<폴더>"+filelist[i].toString() + "\n";
+                    else
+                        str += "<폴더>"+filelist[i].toString() + "\n";
+                }
+                et1.setText(str);
+
                 break;
         }
     }
